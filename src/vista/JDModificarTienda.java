@@ -5,18 +5,43 @@
  */
 package vista;
 
+import modelo.Tienda;
+import org.neodatis.odb.ODB;
+import org.neodatis.odb.ODBFactory;
+import org.neodatis.odb.Objects;
+import org.neodatis.odb.core.query.IQuery;
+import org.neodatis.odb.core.query.criteria.Where;
+import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
+
 /**
  *
  * @author Joaquin
  */
 public class JDModificarTienda extends javax.swing.JDialog {
+    ODB odbfac;
+    String filename = "C:\\Users\\Joaquin\\Documents\\NetBeansProjects\\ODB\\src\\neodatis.test";
+    static int t;
 
     /**
      * Creates new form JDModificarTienda
      */
-    public JDModificarTienda(java.awt.Frame parent, boolean modal) {
+    public JDModificarTienda(java.awt.Frame parent, boolean modal, int t) {
         super(parent, modal);
         initComponents();
+        this.t = t;
+        rellenaCampos();
+    }
+    public void rellenaCampos(){
+        odbfac= ODBFactory.open(filename);
+        IQuery query = new CriteriaQuery(Tienda.class, Where.equal("id", t));
+        Objects<Tienda> objects = odbfac.getObjects(query);
+        Tienda tien = objects.getFirst();
+        jTextFieldDireccionTienda.setText(tien.getDireccion());
+        jTextFieldNIFTienda.setText(tien.getNif());
+        jTextFieldNombreTienda.setText(tien.getNombre());
+        jTextFieldTlfTienda.setText(tien.getTelefono()+"");
+        jLabelId.setText("ID: "+tien.getId());
+        odbfac.close();
     }
 
     /**
@@ -36,7 +61,8 @@ public class JDModificarTienda extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jTextFieldNombreTienda = new javax.swing.JTextField();
-        jButtonAnadirTienda = new javax.swing.JButton();
+        jButtonModificarTienda = new javax.swing.JButton();
+        jLabelId = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -48,35 +74,49 @@ public class JDModificarTienda extends javax.swing.JDialog {
 
         jLabel4.setText("Telefono");
 
-        jButtonAnadirTienda.setText("Modificar");
+        jButtonModificarTienda.setText("Modificar");
+        jButtonModificarTienda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModificarTiendaActionPerformed(evt);
+            }
+        });
+
+        jLabelId.setText("jLabel5");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(104, 104, 104)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldNombreTienda)
-                    .addComponent(jTextFieldNIFTienda)
-                    .addComponent(jTextFieldDireccionTienda)
-                    .addComponent(jTextFieldTlfTienda, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(107, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButtonAnadirTienda)
+                .addComponent(jButtonModificarTienda)
                 .addGap(161, 161, 161))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(104, 104, 104)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3))
+                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldNombreTienda)
+                            .addComponent(jTextFieldNIFTienda)
+                            .addComponent(jTextFieldDireccionTienda)
+                            .addComponent(jTextFieldTlfTienda, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(133, 133, 133)
+                        .addComponent(jLabelId)))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(43, 43, 43)
+                .addGap(18, 18, 18)
+                .addComponent(jLabelId)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldNombreTienda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -93,12 +133,29 @@ public class JDModificarTienda extends javax.swing.JDialog {
                     .addComponent(jTextFieldTlfTienda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
-                .addComponent(jButtonAnadirTienda)
+                .addComponent(jButtonModificarTienda)
                 .addGap(38, 38, 38))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonModificarTiendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificarTiendaActionPerformed
+        // TODO add your handling code here:
+        odbfac = ODBFactory.open(filename);
+        IQuery queryupdate = new CriteriaQuery(Tienda.class, Where.equal("id", t));
+        Objects<Tienda> objects = odbfac.getObjects(queryupdate);
+        Tienda tien =(Tienda) objects.getFirst();
+        tien.setDireccion(jTextFieldDireccionTienda.getText());
+        tien.setId(t);
+        tien.setNif(jTextFieldNIFTienda.getText());
+        tien.setNombre(jTextFieldNombreTienda.getText());
+        tien.setTelefono(Integer.parseInt(jTextFieldTlfTienda.getText()));
+        odbfac.store(tien);
+        odbfac.close();
+        
+        
+    }//GEN-LAST:event_jButtonModificarTiendaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -130,7 +187,7 @@ public class JDModificarTienda extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDModificarTienda dialog = new JDModificarTienda(new javax.swing.JFrame(), true);
+                JDModificarTienda dialog = new JDModificarTienda(new javax.swing.JFrame(), true,t);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -143,11 +200,12 @@ public class JDModificarTienda extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonAnadirTienda;
+    private javax.swing.JButton jButtonModificarTienda;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelId;
     private javax.swing.JTextField jTextFieldDireccionTienda;
     private javax.swing.JTextField jTextFieldNIFTienda;
     private javax.swing.JTextField jTextFieldNombreTienda;

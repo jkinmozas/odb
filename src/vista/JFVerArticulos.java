@@ -26,7 +26,7 @@ public class JFVerArticulos extends javax.swing.JFrame {
 
     public void actualizarTabla() {
         odbfac = ODBFactory.open(filename);
-
+        jTable1.removeAll();
         DefaultTableModel tmart = new DefaultTableModel();
         while (tmart.getRowCount() > 0) {
             tmart.removeRow(0);
@@ -38,8 +38,11 @@ public class JFVerArticulos extends javax.swing.JFrame {
         tmart.addColumn("Precio");
 
         Object[] columnaArt = new Object[5];
+//        //Testing only
+//        id=1;
         IQuery query = new CriteriaQuery(Articulo.class, Where.equal("tiendaId", id));
         Objects<Articulo> objects = odbfac.getObjects(query);
+        
         while (objects.hasNext()) {
             Articulo a = new Articulo();
             a = (Articulo) objects.next();
@@ -59,8 +62,9 @@ public class JFVerArticulos extends javax.swing.JFrame {
      */
     public JFVerArticulos(int id) {
         initComponents();
-        actualizarTabla();
         this.id = id;
+        actualizarTabla();
+        
     }
 
     /**
@@ -76,12 +80,13 @@ public class JFVerArticulos extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jButtonBorrarArticulo = new javax.swing.JButton();
         jButtonModificarArticulo = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemTienda = new javax.swing.JMenuItem();
         jMenuItemArticulo = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -107,6 +112,13 @@ public class JFVerArticulos extends javax.swing.JFrame {
         jButtonModificarArticulo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonModificarArticuloActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -140,6 +152,8 @@ public class JFVerArticulos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jButtonModificarArticulo, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(57, 57, 57)
                 .addComponent(jButtonBorrarArticulo, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
@@ -151,7 +165,8 @@ public class JFVerArticulos extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonBorrarArticulo)
-                    .addComponent(jButtonModificarArticulo))
+                    .addComponent(jButtonModificarArticulo)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -194,6 +209,10 @@ public class JFVerArticulos extends javax.swing.JFrame {
         jdma.setVisible(true);
     }//GEN-LAST:event_jButtonModificarArticuloActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+actualizarTabla();        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -231,6 +250,7 @@ public class JFVerArticulos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonBorrarArticulo;
     private javax.swing.JButton jButtonModificarArticulo;
     private javax.swing.JMenu jMenu1;

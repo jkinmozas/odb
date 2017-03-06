@@ -5,20 +5,69 @@
  */
 package vista;
 
+import modelo.Articulo;
+import modelo.Tienda;
+import org.neodatis.odb.ODB;
+import org.neodatis.odb.ODBFactory;
+import org.neodatis.odb.Objects;
+import org.neodatis.odb.core.query.IQuery;
+import org.neodatis.odb.core.query.criteria.Where;
+import org.neodatis.odb.impl.core.query.criteria.CriteriaQuery;
+
 /**
  *
  * @author Joaquin
  */
 public class JDModificarArticulo extends javax.swing.JDialog {
-    static int id;
+   static int a;
+       ODB odbfac;
+    String filename = "C:\\Users\\Joaquin\\Documents\\NetBeansProjects\\ODB\\src\\neodatis.test";
 
     /**
      * Creates new form JDModificarArticulo
      */
-    public JDModificarArticulo(java.awt.Frame parent, boolean modal, int id) {
+    public JDModificarArticulo(java.awt.Frame parent, boolean modal, int a) {
         super(parent, modal);
         initComponents();
-        this.id = id;
+        this.a=a;
+        actualizarTiendas();
+        rellenarCampos();
+        
+    }
+    public void actualizarTiendas() {
+        odbfac = ODBFactory.open(filename);
+        jComboBoxTienda.removeAllItems();
+
+        Objects<Tienda> objects = odbfac.getObjects(Tienda.class);
+        if (objects.isEmpty()) {
+            jComboBoxTienda.addItem("No hay Tiendas");
+            jComboBoxTienda.setEnabled(false);
+        } else {
+            jComboBoxTienda.setEnabled(true);
+            while (objects.hasNext()) {
+                Tienda t = new Tienda();
+                t = objects.next();
+                jComboBoxTienda.addItem(String.valueOf(t.getId()));
+
+            }
+        }
+        odbfac.close();
+
+    }
+    public void rellenarCampos(){
+        odbfac=ODBFactory.open(filename);
+        IQuery query = new CriteriaQuery(Articulo.class, Where.equal("id", a));
+        Objects<Articulo> objects = odbfac.getObjects(query);
+        Articulo art = objects.getFirst();
+        jTextFieldDescripcionArticulo.setText(art.getDescripcion());
+        jTextFieldNombreArticulo.setText(art.getNombre());
+        jTextFieldPrecioArticulo.setText(art.getPrecio()+"");
+        jLabelAntTienda.setText(art.getTiendaId()+"");
+        System.out.println(art.getTiendaId());
+       // jComboBoxTienda.setSelectedItem(art.getTiendaId());
+        
+        odbfac.close();
+        
     }
     
 
@@ -34,12 +83,13 @@ public class JDModificarArticulo extends javax.swing.JDialog {
         jTextFieldNombreArticulo = new javax.swing.JTextField();
         jTextFieldDescripcionArticulo = new javax.swing.JTextField();
         jTextFieldPrecioArticulo = new javax.swing.JTextField();
-        jButtonAnadirArticulo = new javax.swing.JButton();
+        jButtonModificarArticulo = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jComboBoxTienda = new javax.swing.JComboBox<>();
+        jLabelAntTienda = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -49,10 +99,10 @@ public class JDModificarArticulo extends javax.swing.JDialog {
 
         jTextFieldPrecioArticulo.setText("jTextField3");
 
-        jButtonAnadirArticulo.setText("Modificar");
-        jButtonAnadirArticulo.addActionListener(new java.awt.event.ActionListener() {
+        jButtonModificarArticulo.setText("Modificar");
+        jButtonModificarArticulo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAnadirArticuloActionPerformed(evt);
+                jButtonModificarArticuloActionPerformed(evt);
             }
         });
 
@@ -66,21 +116,27 @@ public class JDModificarArticulo extends javax.swing.JDialog {
 
         jComboBoxTienda.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLabelAntTienda.setText("jLabel5");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(170, 170, 170)
-                .addComponent(jButtonAnadirArticulo)
+                .addComponent(jButtonModificarArticulo)
                 .addContainerGap(155, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel1)
+                        .addComponent(jLabel3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelAntTienda)
+                        .addGap(22, 22, 22)))
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTextFieldNombreArticulo, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -108,18 +164,34 @@ public class JDModificarArticulo extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBoxTienda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
-                .addComponent(jButtonAnadirArticulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabelAntTienda)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
+                .addComponent(jButtonModificarArticulo)
                 .addGap(19, 19, 19))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonAnadirArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnadirArticuloActionPerformed
+    private void jButtonModificarArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificarArticuloActionPerformed
         // TODO add your handling code here:
-        System.out.println(id);
-    }//GEN-LAST:event_jButtonAnadirArticuloActionPerformed
+        odbfac = ODBFactory.open(filename);
+        IQuery queryupdate = new CriteriaQuery(Articulo.class, Where.equal("id", a));
+        Objects<Articulo> objects = odbfac.getObjects(queryupdate);
+        Articulo art = objects.getFirst();
+        art.setDescripcion(jTextFieldDescripcionArticulo.getText());
+        art.setNombre(jTextFieldNombreArticulo.getText());
+        art.setTiendaId(Integer.parseInt(jComboBoxTienda.getSelectedItem().toString()));
+        art.setId(a);
+        art.setPrecio(Double.parseDouble(jTextFieldPrecioArticulo.getText()));
+        odbfac.store(art);
+        odbfac.close();
+        System.out.println("modificao");
+        
+        
+       
+    }//GEN-LAST:event_jButtonModificarArticuloActionPerformed
 
     /**
      * @param args the command line arguments
@@ -147,11 +219,11 @@ public class JDModificarArticulo extends javax.swing.JDialog {
             java.util.logging.Logger.getLogger(JDModificarArticulo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-System.out.println(id);
+
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                JDModificarArticulo dialog = new JDModificarArticulo(new javax.swing.JFrame(), true, id);
+                JDModificarArticulo dialog = new JDModificarArticulo(new javax.swing.JFrame(), true, a);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -164,12 +236,13 @@ System.out.println(id);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonAnadirArticulo;
+    private javax.swing.JButton jButtonModificarArticulo;
     private javax.swing.JComboBox<String> jComboBoxTienda;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelAntTienda;
     private javax.swing.JTextField jTextFieldDescripcionArticulo;
     private javax.swing.JTextField jTextFieldNombreArticulo;
     private javax.swing.JTextField jTextFieldPrecioArticulo;

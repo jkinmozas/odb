@@ -5,11 +5,21 @@
  */
 package vista;
 
+import javax.swing.JOptionPane;
+import modelo.Articulo;
+import modelo.Tienda;
+import org.neodatis.odb.ODB;
+import org.neodatis.odb.ODBFactory;
+import org.neodatis.odb.Objects;
+
 /**
  *
  * @author Joaquin
  */
 public class JDAnadirArticulo extends javax.swing.JDialog {
+
+    String filename = "C:\\Users\\Joaquin\\Documents\\NetBeansProjects\\ODB\\src\\neodatis.test";
+    ODB odbfac;
 
     /**
      * Creates new form JDAnadirArticulo
@@ -17,6 +27,44 @@ public class JDAnadirArticulo extends javax.swing.JDialog {
     public JDAnadirArticulo(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        actualizarTiendas();
+    }
+
+    public void actualizarTiendas() {
+        odbfac = ODBFactory.open(filename);
+        jComboBoxTienda.removeAllItems();
+
+        Objects<Tienda> objects = odbfac.getObjects(Tienda.class);
+        if (objects.isEmpty()) {
+            jComboBoxTienda.addItem("No hay Tiendas");
+            jComboBoxTienda.setEnabled(false);
+        } else {
+            jComboBoxTienda.setEnabled(true);
+            while (objects.hasNext()) {
+                Tienda t = new Tienda();
+                t = objects.next();
+                jComboBoxTienda.addItem(String.valueOf(t.getId()));
+
+            }
+        }
+        odbfac.close();
+
+    }
+    public int lastId(){
+        if(odbfac.isClosed()){
+        odbfac = ODBFactory.open(filename);
+        }else{
+            odbfac.close();
+            odbfac=ODBFactory.open(filename);
+        }
+        Objects<Articulo> objects = odbfac.getObjects(Articulo.class);
+        int i=0;
+        while(objects.hasNext()){
+            i = objects.next().getId();
+        }
+       odbfac.close();
+        return i;
+       
     }
 
     /**
@@ -47,6 +95,11 @@ public class JDAnadirArticulo extends javax.swing.JDialog {
         jTextFieldPrecioArticulo.setText("jTextField3");
 
         jButtonAnadirArticulo.setText("Añadir");
+        jButtonAnadirArticulo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAnadirArticuloActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Nombre");
 
@@ -107,6 +160,31 @@ public class JDAnadirArticulo extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonAnadirArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnadirArticuloActionPerformed
+        // TODO add your handling code here:
+        if(jComboBoxTienda.isEnabled()&&!jTextFieldNombreArticulo.getText().isEmpty()
+                &&!jTextFieldDescripcionArticulo.getText().isEmpty()&&!jTextFieldPrecioArticulo.getText().isEmpty()){
+            try {
+                
+                int id = lastId()+1;
+                odbfac = ODBFactory.open(filename);
+                String nombre = jTextFieldNombreArticulo.getText();
+                String descripcion = jTextFieldDescripcionArticulo.getText();
+               double precio = Double.parseDouble(jTextFieldPrecioArticulo.getText());
+               int idtienda = Integer.parseInt(jComboBoxTienda.getSelectedItem().toString());
+               Articulo a = new Articulo(id, nombre, descripcion, precio, idtienda);
+               odbfac.store(a);
+               odbfac.close();
+               JOptionPane.showMessageDialog(rootPane, "Se inserto correctamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(rootPane, "El precio no es valido", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(rootPane, "No puede haber ningun campor vacio", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonAnadirArticuloActionPerformed
 
     /**
      * @param args the command line arguments

@@ -6,6 +6,7 @@
 package vista;
 
 import javax.swing.table.DefaultTableModel;
+import modelo.Articulo;
 import modelo.Tienda;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
@@ -78,6 +79,7 @@ public class JFVerTiendas extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItemTienda = new javax.swing.JMenuItem();
         jMenuItemArticulo = new javax.swing.JMenuItem();
+        jMenuItemDatos = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -132,6 +134,14 @@ public class JFVerTiendas extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItemArticulo);
+
+        jMenuItemDatos.setText("Datos prueba");
+        jMenuItemDatos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDatosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemDatos);
 
         jMenuBar1.add(jMenu1);
 
@@ -188,6 +198,7 @@ public class JFVerTiendas extends javax.swing.JFrame {
         IQuery querydelete = new CriteriaQuery(Tienda.class, Where.equal("id", Integer.parseInt(jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString())));
         Objects<Tienda> objects = odbfac.getObjects(querydelete);
         Tienda t = new Tienda();
+        t=objects.getFirst();
         odbfac.delete(t);
         odbfac.close();
         actualizarTabla();
@@ -197,14 +208,37 @@ public class JFVerTiendas extends javax.swing.JFrame {
 
     private void jButtonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificarActionPerformed
         // TODO add your handling code here:
+        int id = Integer.parseInt(jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString());
+        JDModificarTienda jdmt = new JDModificarTienda(this, rootPaneCheckingEnabled, id);
+        jdmt.setVisible(true);
     }//GEN-LAST:event_jButtonModificarActionPerformed
 
     private void jButtonverArticulosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonverArticulosActionPerformed
         // TODO add your handling code here:
-        
+        System.out.println(jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString());  
         JFVerArticulos jfva = new JFVerArticulos(Integer.parseInt(jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString()));
+      
         jfva.setVisible(true);
     }//GEN-LAST:event_jButtonverArticulosActionPerformed
+
+    private void jMenuItemDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDatosActionPerformed
+        // TODO add your handling code here:
+        odbfac=ODBFactory.open(filename);
+        System.out.println("abierta");
+        for(int i =0; i<10;i++){
+            System.out.println("tienda "+i);
+            Tienda t = new Tienda(i, "nif"+i, "nombre"+i, 999990+i , "direccion"+i);
+            odbfac.store(t);
+            
+        }for(int j=0;j<5;j++){
+            int i=0;
+                System.out.println("articulo"+ j+" "+i++);
+                Articulo a = new Articulo(j, "nombre"+j, "descripcion"+ j, 2.552, i++);
+                odbfac.store(a);
+            }
+        odbfac.close();
+        actualizarTabla();
+    }//GEN-LAST:event_jMenuItemDatosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -249,6 +283,7 @@ public class JFVerTiendas extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemArticulo;
+    private javax.swing.JMenuItem jMenuItemDatos;
     private javax.swing.JMenuItem jMenuItemTienda;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

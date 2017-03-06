@@ -5,11 +5,19 @@
  */
 package vista;
 
+import javax.swing.JOptionPane;
+import modelo.Tienda;
+import org.neodatis.odb.ODB;
+import org.neodatis.odb.ODBFactory;
+import org.neodatis.odb.Objects;
+
 /**
  *
  * @author Joaquin
  */
 public class JDAnadirTienda extends javax.swing.JDialog {
+      String filename = "C:\\Users\\Joaquin\\Documents\\NetBeansProjects\\ODB\\src\\neodatis.test";
+    ODB odbfac;
 
     /**
      * Creates new form JDAnadirTienda
@@ -17,6 +25,18 @@ public class JDAnadirTienda extends javax.swing.JDialog {
     public JDAnadirTienda(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+     public int lastId(){
+         if(odbfac.isClosed()){
+        odbfac = ODBFactory.open(filename);}
+        Objects<Tienda> objects = odbfac.getObjects(Tienda.class);
+        int i=0;
+        while(objects.hasNext()){
+            i = objects.next().getId();
+        }
+       odbfac.close();
+        return i;
+       
     }
 
     /**
@@ -49,6 +69,11 @@ public class JDAnadirTienda extends javax.swing.JDialog {
         jLabel4.setText("Telefono");
 
         jButtonAnadirTienda.setText("Añadir");
+        jButtonAnadirTienda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAnadirTiendaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -99,6 +124,32 @@ public class JDAnadirTienda extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonAnadirTiendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnadirTiendaActionPerformed
+        // TODO add your handling code here:
+        if(jTextFieldDireccionTienda.getText().isEmpty()&&jTextFieldNIFTienda.getText().isEmpty()
+                &&jTextFieldNombreTienda.getText().isEmpty()&&jTextFieldTlfTienda.getText().isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "No puede haber ningun campo vacio", "Error", JOptionPane.ERROR_MESSAGE);
+        }else{
+            try {
+                odbfac= ODBFactory.open(filename);
+                int telefono = Integer.parseInt(jTextFieldTlfTienda.getText());
+                String nombre = jTextFieldNombreTienda.getText();
+                String nif = jTextFieldNIFTienda.getText();
+                String direccion = jTextFieldDireccionTienda.getText();
+                int id = lastId()+1;
+                odbfac = ODBFactory.open(filename);
+                Tienda t = new Tienda(id, nif, nombre, telefono, direccion);
+                odbfac.store(t);
+                odbfac.close();
+                JOptionPane.showMessageDialog(rootPane, "Se inserto correctamente", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(rootPane, "El telefono es incorrecto", "Error", JOptionPane.ERROR);
+            }
+            
+        }
+    }//GEN-LAST:event_jButtonAnadirTiendaActionPerformed
 
     /**
      * @param args the command line arguments
